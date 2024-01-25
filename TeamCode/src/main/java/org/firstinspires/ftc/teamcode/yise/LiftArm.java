@@ -47,6 +47,8 @@ public class LiftArm {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         setHandPosition(HandPosition.IN);
+
+
     }
 
 

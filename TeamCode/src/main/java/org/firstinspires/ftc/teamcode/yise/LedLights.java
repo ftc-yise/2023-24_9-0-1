@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode.yise;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public class LedLights {
     public final RevBlinkinLedDriver lights;
     public ledStates currentState;
+
+    private DigitalChannel redLED;
+    private DigitalChannel greenLED;
 
 
 
@@ -22,6 +27,15 @@ public class LedLights {
 
     public LedLights(HardwareMap hardwareMap) {
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "led");
+
+        redLED = hardwareMap.get(DigitalChannel.class, "red");
+        greenLED = hardwareMap.get(DigitalChannel.class, "green");
+
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+
+        greenEye();
+
         currentState = ledStates.INIT;
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_FOREST_PALETTE);
     }
@@ -58,4 +72,18 @@ public class LedLights {
                 break;
         }
     }
+
+    public void redEye() {
+        greenLED.setState(false);
+        redLED.setState(true);
+    }
+    public void greenEye() {
+        greenLED.setState(true);
+        redLED.setState(false);
+    }
+    public void mixEye() {
+        greenLED.setState(true);
+        redLED.setState(true);
+    }
+
 }

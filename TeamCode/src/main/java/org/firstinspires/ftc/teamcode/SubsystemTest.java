@@ -100,11 +100,13 @@ public class SubsystemTest extends LinearOpMode {
                 leds.setLed(LedLights.ledStates.INTAKE);
                 Default = Default + DefaultAddition;
                 Intakepos = false;
+                leds.redEye();
             } else if (gamepad1.left_trigger > 0.75){
                 intakeSystem.runIntakeSystem(-0.5);
                 leds.setLed(LedLights.ledStates.INTAKE);
                 Default = Default + DefaultAddition;
                 Intakepos = false;
+                leds.mixEye();
             } else if (!Intakepos && gamepad1.right_trigger < 0.75 && gamepad1.right_trigger < 0.75) {
                 intakeSystem.runIntakeSystem(0);
                 Default = Default - DefaultAddition;
