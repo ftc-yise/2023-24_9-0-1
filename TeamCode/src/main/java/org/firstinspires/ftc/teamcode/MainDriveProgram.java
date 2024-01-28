@@ -70,7 +70,7 @@ public class MainDriveProgram extends LinearOpMode {
                 if (rrDrive.getPosition().getX() < -30) {
                     rrDrive.navigateToCorner();
                 } else if (rrDrive.getPosition().getX() > 0) {
-                    arm.extend(LiftArm.Distance.AUTO);
+                    arm.extend(LiftArm.Distance.LOW);
                     rrDrive.dropPixelNear();
                 }
             } else if (gamepad1.dpad_down) {
@@ -137,7 +137,7 @@ public class MainDriveProgram extends LinearOpMode {
                 arm.extend(LiftArm.Distance.HALF);
                 arm.holdArm();
             } else if (gamepad2.dpad_left) {
-                arm.extend(LiftArm.Distance.AUTO);
+                arm.extend(LiftArm.Distance.LOW);
                 arm.holdArm();
             } else if (gamepad2.dpad_down) {
                 arm.retract();

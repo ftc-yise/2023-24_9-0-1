@@ -32,6 +32,9 @@ public class Parameters extends LinearOpMode {
     public static EndingPosition endingPosition;
     public static Color allianceColor;
 
+    public static double wait = 0;
+    public boolean XReleased;
+
     @Override
     public void runOpMode() {
 
@@ -90,10 +93,36 @@ public class Parameters extends LinearOpMode {
             //Wait until released
         }
 
+        while (!gamepad1.y) {
+            telemetry.addLine("Wait Seconds \n" + wait);
+            telemetry.addLine("▢ = -1 \n X = +1 \n O = 0 \n Y to continue");
+            telemetry.update();
+
+            if (gamepad1.x && XReleased) {
+                wait = wait - 1;
+                XReleased = false;
+            } else if (gamepad1.a && XReleased) {
+                wait = wait + 1;
+                XReleased = false;
+            } else if (gamepad1.b && XReleased) {
+                wait = 0;
+                XReleased = false;
+            }
+
+            if (!gamepad1.x && !gamepad1.a && !gamepad1.b && !XReleased){
+                XReleased = true;
+            }
+        }
+
+        while (gamepad1.y) {
+            //Wait until released
+        }
+
         while (!gamepad1.a) {
             telemetry.addLine("Color: " + allianceColor);
             telemetry.addLine("Starting Position: " + autoConfig);
             telemetry.addLine("Park position: " + endingPosition);
+            telemetry.addLine("Wait: " + wait);
             telemetry.addLine("\nX to end program");
 
             telemetry.update();

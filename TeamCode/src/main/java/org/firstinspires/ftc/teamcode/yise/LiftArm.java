@@ -23,6 +23,7 @@ public class LiftArm {
     public enum Distance {
         DEFAULT,
         AUTO,
+        LOW,
         HALF,
         FULL,
         ENDGAMEStart,
@@ -65,7 +66,7 @@ public class LiftArm {
             case DEFAULT:
                 slide.setTargetPosition(0);
                 break;
-            case AUTO:
+            case LOW:
                 slide.setTargetPosition(1800);
                 break;
             case HALF:
@@ -79,6 +80,9 @@ public class LiftArm {
                 break;
             case ENDGAMEHOLD:
                 slide.setTargetPosition(1000);
+                break;
+            case AUTO:
+                slide.setTargetPosition(900);
                 break;
         }
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
