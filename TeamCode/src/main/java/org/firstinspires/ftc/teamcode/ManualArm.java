@@ -48,7 +48,6 @@ public class ManualArm extends LinearOpMode {
                 arm.hand.setPower(.35);
             } else {
                 arm.hand.setPower(0);
-                arm.hand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
             telemetry.addData("arm", arm.getSlidePosition());

@@ -82,7 +82,7 @@ public class LiftArm {
                 slide.setTargetPosition(1000);
                 break;
             case AUTO:
-                slide.setTargetPosition(900);
+                slide.setTargetPosition(500);
                 break;
         }
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -98,7 +98,7 @@ public class LiftArm {
                 hand.setTargetPosition(0);
                 break;
             case OUT:
-                hand.setTargetPosition(150);
+                hand.setTargetPosition(160);
                 break;
         }
         hand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
