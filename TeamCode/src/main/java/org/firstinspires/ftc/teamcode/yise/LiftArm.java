@@ -11,7 +11,7 @@ import org.opencv.core.Mat;
 public class LiftArm {
     public DcMotor slide, hand;
     public Servo trapdoor;
-    public Servo PurplePixel;
+    public Servo purplePixel;
 
 
     public Servo plane;
@@ -26,7 +26,7 @@ public class LiftArm {
         LOW,
         HALF,
         FULL,
-        ENDGAMEStart,
+        ENDGAMESTART,
         ENDGAMEHOLD
     }
 
@@ -43,10 +43,11 @@ public class LiftArm {
         slide = hardwareMap.get(DcMotor.class, "slide");
         trapdoor = hardwareMap.get(Servo.class, "trapdoor");
         plane = hardwareMap.get(Servo.class, "plane");
-        PurplePixel = hardwareMap.get(Servo.class, "purple");
+        purplePixel = hardwareMap.get(Servo.class, "purple");
 
         closeTrapdoor();
         reloadPlane();
+        purplePixel.setPosition(Servo.MAX_POSITION);
 
         //Set motor directions
         hand.setDirection(DcMotor.Direction.FORWARD);
@@ -75,7 +76,7 @@ public class LiftArm {
             case FULL:
                 slide.setTargetPosition(8000);
                 break;
-            case ENDGAMEStart:
+            case ENDGAMESTART:
                 slide.setTargetPosition(7500);
                 break;
             case ENDGAMEHOLD:
@@ -106,7 +107,7 @@ public class LiftArm {
         if (endPos == 150) {
             hand.setPower(0.25);
         } else if (endPos == 0) {
-            hand.setPower(0.35);
+            hand.setPower(0.25);
         }
     }
 
@@ -120,17 +121,14 @@ public class LiftArm {
     }
 
     public void reloadPlane() {
-        plane.setPosition(0);
+        plane.setPosition(-0.2);
     }
     public void launchPlane() {
         plane.setPosition(.75);
     }
 
-    public void PickupPurplePixel() {
-        PurplePixel.setPosition(Servo.MAX_POSITION);
-    }
-    public void DropPurplePixel() {
-        PurplePixel.setPosition(Servo.MIN_POSITION);
+
+    public void dropPurplePixel() { purplePixel.setPosition(Servo.MIN_POSITION);
     }
 
 
