@@ -39,9 +39,15 @@ public class MeepMeepTesting {
                 .setDimensions(14.125, 16)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-39.4375, 62, Math.toRadians(90)))
-                                .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
-                                .build()
+                        drive.trajectorySequenceBuilder(new Pose2d(-43.5, 38, Math.toRadians(90)))
+                                .back(-16)
+                                .lineToLinearHeading(new Pose2d(-55, 36, Math.toRadians(180)))
+                                .forward(5)
+                                .waitSeconds(2) // insert intake here
+                                .back(3)
+                                .strafeLeft(24)
+                                .lineToLinearHeading(new Pose2d(18, 12, Math.toRadians(180)))
+                                .lineToLinearHeading(new Pose2d(46, 42, Math.toRadians(0)))                                .build()
                 );
 
         RoadRunnerBotEntity blueExteriorLeft = new DefaultBotBuilder(meepMeep)
