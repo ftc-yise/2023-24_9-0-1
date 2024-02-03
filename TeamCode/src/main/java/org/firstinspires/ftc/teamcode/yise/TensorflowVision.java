@@ -40,7 +40,7 @@ public class TensorflowVision {
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                 //.setModelAssetName("redownloadedmodel.tflite")
-                .setModelFileName("modelt.tflite")
+                .setModelFileName("hotelmodel.tflite")
 
                 .setModelLabels(LABELS)
                 //.setIsModelTensorFlow2(true)
@@ -95,7 +95,7 @@ public class TensorflowVision {
             exposureControl.setMode(ExposureControl.Mode.Manual);
         }
 
-        exposureControl.setExposure(80, TimeUnit.MILLISECONDS);
+        exposureControl.setExposure(20, TimeUnit.MILLISECONDS);
 
         // Set Gain.
         GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
@@ -110,15 +110,15 @@ public class TensorflowVision {
             while ( (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                 //
             }
-        }*/
+        }
 
         // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
-        /*ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
         if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
             exposureControl.setMode(ExposureControl.Mode.Manual);
         }
 
-        exposureControl.setExposure(100, TimeUnit.MILLISECONDS);
+        exposureControl.setExposure(20, TimeUnit.MILLISECONDS);
 
         // Set Gain.
         GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
@@ -131,7 +131,7 @@ public class TensorflowVision {
             return 2;
         }
 
-        // Step through the list of recognitions and display info for each one.
+        //Find pos of recognition
         double x = 0;
         for (Recognition recognition : currentRecognitions) {
             x = (recognition.getLeft() + recognition.getRight())/2;
