@@ -24,8 +24,6 @@ public class MainDriveProgram extends LinearOpMode {
     boolean canToggleSlowMode = true;
     boolean reverseIntake = false;
 
-    boolean inEndGame = false;
-
     @Override
     public void runOpMode() {
 
@@ -36,7 +34,9 @@ public class MainDriveProgram extends LinearOpMode {
         // create instance of intake system class
         IntakeSystem intakeSystem = new IntakeSystem(hardwareMap);
 
-        //LedLights leds = new LedLights(hardwareMap);
+        LedLights leds = new LedLights(hardwareMap);
+
+        Parameters parameters = new Parameters();
 
         DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
 
@@ -48,21 +48,17 @@ public class MainDriveProgram extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        //leds.setLed(LedLights.ledStates.BLUE);
-
+        if (Parameters.allianceColor == Parameters.Color.RED) {
+            leds.setLed(LedLights.ledStates.RED);
+        } else if (Parameters.allianceColor == Parameters.Color.BLUE) {
+            leds.setLed(LedLights.ledStates.BLUE);
+        }
 
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-
-            if (!inEndGame && getRuntime() > 90) {
-                inEndGame = true;
-                //leds.setLed(LedLights.ledStates.ENDGAME);
-            }
 
             /**
              * Driving
@@ -104,9 +100,24 @@ public class MainDriveProgram extends LinearOpMode {
              * Intake
              */
             //Check if both slots are full in bucket
-            if ((colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) && (colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE)) {
+            if (colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE && colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE) {
+                //Turn on yellow color, 1 pixel=
                 reverseIntake = true;
+                leds.setLed(LedLights.ledStates.GREEN);
+            } else if (colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) {
+                leds.setLed(LedLights.ledStates.YELLOW);
+                reverseIntake = false;
             } else {
+                //Turn to alliance color
+                if (getRuntime() > 85) {
+                    leds.setLed(LedLights.ledStates.ENDGAME);
+                } else {
+                    if (Parameters.allianceColor == Parameters.Color.RED) {
+                        leds.setLed(LedLights.ledStates.RED);
+                    } else if (Parameters.allianceColor == Parameters.Color.BLUE) {
+                        leds.setLed(LedLights.ledStates.BLUE);
+                    }
+                }
                 reverseIntake = false;
             }
 
@@ -114,8 +125,10 @@ public class MainDriveProgram extends LinearOpMode {
                 //If both slot are full, outtake excess pixels
                 if (reverseIntake) {
                     intakeSystem.runIntakeSystem(-1);
+                    //leds.setLed(LedLights.ledStates.INTAKE);
                 } else {
                     intakeSystem.runIntakeSystem(1);
+                    //leds.setLed(LedLights.ledStates.INTAKE);
                 }
             } else if ((gamepad2.left_trigger > 0.5 || gamepad1.left_trigger > 0.5)) {
                 //Manual outtake
@@ -149,6 +162,7 @@ public class MainDriveProgram extends LinearOpMode {
              */
             if (gamepad2.right_bumper) {
                 arm.openTrapdoor();
+                leds.setLed(LedLights.ledStates.OPEN);
             } else if (gamepad2.left_bumper && !trapdoorMoving) {
                 trapdoorMoving = true;
                 arm.openTrapdoor();
@@ -168,9 +182,11 @@ public class MainDriveProgram extends LinearOpMode {
             if (gamepad1.a && gamepad1.x){
                 arm.setArmDistance(LiftArm.Distance.ENDGAMESTART);
                 armOut = true;
+                leds.setLed(LedLights.ledStates.HANG);
             } else if (!gamepad1.a && armOut) {
                 arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
                 arm.holdHang();
+                leds.setLed(LedLights.ledStates.CELEBRATION);
             }
 
 

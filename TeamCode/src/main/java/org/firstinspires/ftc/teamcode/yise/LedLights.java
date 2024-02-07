@@ -13,8 +13,11 @@ public class LedLights {
         INIT,
         OPEN,
         RED,
+        YELLOW,
         BLUE,
         HANG,
+        GREEN,
+        CELEBRATION,
         ENDGAME,
         INTAKE,
         DARK
@@ -36,12 +39,24 @@ public class LedLights {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
                 currentState = state;
                 break;
+            case YELLOW:
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                currentState = state;
+                break;
+            case GREEN:
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+                currentState = state;
+                break;
             case BLUE:
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
                 currentState = state;
                 break;
             case HANG:
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+                currentState = state;
+                break;
+            case CELEBRATION:
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
                 currentState = state;
                 break;
             case ENDGAME:

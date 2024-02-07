@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.PoseStorage;
 import org.firstinspires.ftc.teamcode.yise.TensorflowVision;
@@ -308,6 +309,8 @@ public class Auto extends LinearOpMode {
 
         Parameters parameters = new Parameters();
 
+        LedLights leds = new LedLights(hardwareMap);
+
         //Sense cones
         while (!isStarted()) {
             propDetection(vision);
@@ -320,6 +323,8 @@ public class Auto extends LinearOpMode {
             telemetry.addData("wait", Parameters.wait);
 
             telemetry.update();
+
+            leds.setLed(LedLights.ledStates.DARK);
         }
 
         if (isStopRequested()) return;
@@ -329,9 +334,11 @@ public class Auto extends LinearOpMode {
         if (Parameters.allianceColor == Parameters.Color.BLUE){
             startY = 62;
             startZ = 90;
+            leds.setLed(LedLights.ledStates.BLUE);
         } else {
             startY = -62;
             startZ = -90;
+            leds.setLed(LedLights.ledStates.RED);
         }
 
         if (Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR){
