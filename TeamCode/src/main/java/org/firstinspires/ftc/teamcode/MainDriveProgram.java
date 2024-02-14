@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.A;
@@ -23,6 +24,8 @@ public class MainDriveProgram extends LinearOpMode {
 
     boolean canToggleSlowMode = true;
     boolean reverseIntake = false;
+    boolean manualSlide = false;
+    boolean manualHand = false;
 
     @Override
     public void runOpMode() {
@@ -64,7 +67,7 @@ public class MainDriveProgram extends LinearOpMode {
              * Driving
              */
             //Check for auto navigation requested by driver, otherwise give manual control to driver
-            if (gamepad1.dpad_up) {
+            /*if (gamepad1.dpad_up) {
                 if (rrDrive.getPosition().getX() < -30) {
                     rrDrive.navigateToCorner();
                 } else if (rrDrive.getPosition().getX() > 0) {
@@ -81,19 +84,28 @@ public class MainDriveProgram extends LinearOpMode {
                     arm.extend(LiftArm.Distance.HALF);
                     rrDrive.dropPixelMid();
                 }
+            }*/
+            if (gamepad1.dpad_down) {
+                rrDrive.updateFromDpad(-0.2, 0, 0);
+            } else if (gamepad1.dpad_up) {
+                rrDrive.updateFromDpad(0.2, 0, 0);
+            } else if (gamepad1.dpad_left) {
+                rrDrive.updateFromDpad(0, 0.2, 0);
+            } else if (gamepad1.dpad_right) {
+                rrDrive.updateFromDpad(0, -0.2, 0);
             } else {
                 rrDrive.updateMotorsFromStick(gamepad1);
-                rrDrive.update();
             }
+            rrDrive.update();
 
             //If button is pressed on gamepad, calibrate position based on middle april tag
-            if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
+            /*if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
                 AprilTagDetection detection = aprilTagDetector.getAprilTag();
                 rrDrive.calibratePos(detection);
 
                 telemetry.addData("X pos: ", 36.25 + detection.ftcPose.x);
                 telemetry.addData("Y pos: ", 55.5 - detection.ftcPose.y);
-            }
+            }*/
 
 
             /**
@@ -154,6 +166,21 @@ public class MainDriveProgram extends LinearOpMode {
                 arm.holdArm();
             } else if (gamepad2.dpad_down) {
                 arm.retract();
+            } else if (gamepad2.left_stick_button){
+                arm.manualArm(-1);
+                manualSlide = true;
+            } else if (manualSlide == true && !gamepad2.left_stick_button) {
+                arm.slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                manualSlide = false;
+            }
+            
+            if (gamepad2.right_stick_button) {
+                manualHand = true;
+                arm.manualIn();
+            } else if (!gamepad2.right_stick_button && manualHand == true) {
+                manualHand = false;
+                arm.hand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                arm.hand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
 
@@ -162,11 +189,10 @@ public class MainDriveProgram extends LinearOpMode {
              */
             if (gamepad2.right_bumper) {
                 arm.openTrapdoor();
-                leds.setLed(LedLights.ledStates.OPEN);
             } else if (gamepad2.left_bumper && !trapdoorMoving) {
                 trapdoorMoving = true;
                 arm.openTrapdoor();
-                sleep(90 );
+                sleep(75 );
                 arm.closeTrapdoor();
             } else {
                 arm.closeTrapdoor();
@@ -224,7 +250,7 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Telemetry data
              */
-            telemetry.addData("Servo: ", arm.plane.getPosition());
+            //telemetry.addData("Servo: ", arm.plane.getPosition());
             /*telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
             telemetry.addData("Hand power: ", arm.hand.getPower());*/

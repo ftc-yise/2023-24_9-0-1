@@ -38,15 +38,25 @@ public class RoadRunnerDriving {
         speedMultiplier = 1;
     }
 
+    double x = 0;
+    double y = 0;
+    double heading = 0;
+
     //Drives the robot based on gamepad input
     public void updateMotorsFromStick(Gamepad gamepad) {
 
-        //Set drive power based on gamepad inputs multiplied by the speed variable. For the y, also add on the repulsionPower for obstacle avoidance
-        drive.setWeightedDrivePower(new Pose2d(
-                -gamepad.left_stick_y * speedMultiplier,
-                -gamepad.left_stick_x * speedMultiplier,
-                -gamepad.right_stick_x * speedMultiplier
-        ));
+        //Set drive power based on gamepad inputs multiplied by the speed variable
+        if (!gamepad.dpad_down && !gamepad.dpad_up && !gamepad.dpad_left && !gamepad.dpad_right) {
+            x = -gamepad.left_stick_y * speedMultiplier;
+            y = -gamepad.left_stick_x * speedMultiplier;
+            heading = -gamepad.right_stick_x * speedMultiplier;
+            drive.setWeightedDrivePower(new Pose2d(x, y, heading));
+        }
+
+    }
+
+    public void updateFromDpad(double x, double y, double heading) {
+        drive.setWeightedDrivePower(new Pose2d(x, y, heading));
     }
 
 
@@ -74,7 +84,7 @@ public class RoadRunnerDriving {
     }
 
     //Calibrate position using the middle april tag
-    public void calibratePos(AprilTagDetection detection) {
+    /*public void calibratePos(AprilTagDetection detection) {
         if (Parameters.allianceColor == Parameters.Color.RED) {
             drive.setPoseEstimate(new Pose2d(55.5 - detection.ftcPose.y, -(36.25 + detection.ftcPose.x), drive.getPoseEstimate().getHeading()));
         } else {
@@ -167,6 +177,6 @@ public class RoadRunnerDriving {
 
             }
         }
-    }
+    }*/
 }
 
