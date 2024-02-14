@@ -63,7 +63,6 @@ public class LiftArm {
 
 
     public void setArmDistance(Distance targetDistance) {
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         switch (targetDistance) {
             case DEFAULT:
                 slide.setTargetPosition(0);

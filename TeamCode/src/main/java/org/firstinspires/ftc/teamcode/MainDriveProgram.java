@@ -192,7 +192,7 @@ public class MainDriveProgram extends LinearOpMode {
             } else if (gamepad2.left_bumper && !trapdoorMoving) {
                 trapdoorMoving = true;
                 arm.openTrapdoor();
-                sleep(75 );
+                sleep(70 );
                 arm.closeTrapdoor();
             } else {
                 arm.closeTrapdoor();
