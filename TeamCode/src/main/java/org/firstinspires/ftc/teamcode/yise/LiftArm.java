@@ -90,7 +90,15 @@ public class LiftArm {
         slide.setPower(1);
     }
 
+    public void manualArm(double speed) {
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide.setPower(speed);
+    }
 
+    public void manualIn() {
+        hand.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hand.setPower(-0.5);
+    }
 
     public void setHandPosition(HandPosition targetHandPosition) {
         handPosition = targetHandPosition;
@@ -128,7 +136,7 @@ public class LiftArm {
     }
 
 
-    public void dropPurplePixel() { purplePixel.setPosition(Servo.MIN_POSITION);
+    public void dropPurplePixel() { purplePixel.setPosition(-0.5);
     }
 
 
@@ -153,7 +161,7 @@ public class LiftArm {
     public void holdHang() {
         if (!slide.isBusy()) {
             slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            slide.setPower(0.25);
+            slide.setPower(0.2);
         }
     }
 

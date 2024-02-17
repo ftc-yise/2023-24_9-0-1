@@ -89,7 +89,11 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-41.5, -61, Math.toRadians(-90)))
-                                .setReversed(true)
+                                .splineTo(new Vector2d(-30.0, 30.0), Math.toRadians(180))
+                                .splineTo(new Vector2d(-60.0, 0.0), Math.toRadians(-90))
+                                .splineTo(new Vector2d(-30.0, -30.0), Math.toRadians(0))
+                                .splineTo(new Vector2d(0.0, 0.0), Math.toRadians(90))
+                                /*.setReversed(true)
                                 .lineToLinearHeading(new Pose2d(-41, -37, Math.toRadians(-90)))
                                 .strafeRight(10)
                                 .splineTo(new Vector2d(-50, -12), Math.toRadians(90))
@@ -97,23 +101,29 @@ public class MeepMeepTesting {
                                 .splineTo(new Vector2d(48, -38), Math.toRadians(0))
                                 .forward(1)
                                 .splineTo(new Vector2d(-5, -12), Math.toRadians(180))
-                                .forward(50)
+                                .forward(50)*/
                                 .build()
                 );
 
         RoadRunnerBotEntity redInterior = new DefaultBotBuilder(meepMeep)
                 // We set this bot to be blue
                 .setColorScheme(new ColorSchemeRedDark())
+                .setDimensions(14.125, 16)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(17.5, -61, Math.toRadians(-90)))
-                                .waitSeconds(3.71)
+                        drive.trajectorySequenceBuilder(new Pose2d(-39.4375, -62, Math.toRadians(-90)))
+                                .lineToLinearHeading(new Pose2d(-55, 12, Math.toRadians(180)))
+                                .back(60)
+                                .splineTo(new Vector2d(47, -31), Math.toRadians(0))
+                                .setReversed(false)
+                                .splineTo(new Vector2d(5, -12), Math.toRadians(180))
+                                .forward(30)
+                                .splineTo(new Vector2d(-58, -20), Math.toRadians(-160))
                                 .setReversed(true)
-                                .lineToLinearHeading(new Pose2d(17, -37, Math.toRadians(-90)))
-                                .lineToLinearHeading(new Pose2d(48, -38, Math.toRadians(180)))
-                                .forward(1)
-                                .splineTo(new Vector2d(-5, -12), Math.toRadians(180))
-                                .forward(50)
+                                .splineTo(new Vector2d(-28, -12), Math.toRadians(0))
+                                .back(30)
+                                .splineTo(new Vector2d(47, -36), Math.toRadians(0))
+                                .lineToLinearHeading(new Pose2d(50, -36, Math.toRadians(180)))
                                 .build()
                 );
 
@@ -123,9 +133,9 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
 
                 // Add both of our declared bot entities
-                .addEntity(blueInterior)
-                .addEntity(blueExterior)
-                .addEntity(redExterior)
+                //.addEntity(blueInterior)
+                //.addEntity(blueExterior)
+                //.addEntity(redExterior)
                 .addEntity(redInterior)
                 //.addEntity(testBot)
                 .start();

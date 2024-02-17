@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.A;
@@ -23,8 +24,8 @@ public class MainDriveProgram extends LinearOpMode {
 
     boolean canToggleSlowMode = true;
     boolean reverseIntake = false;
-
-    boolean inEndGame = false;
+    boolean manualSlide = false;
+    boolean manualHand = false;
 
     @Override
     public void runOpMode() {
@@ -36,7 +37,9 @@ public class MainDriveProgram extends LinearOpMode {
         // create instance of intake system class
         IntakeSystem intakeSystem = new IntakeSystem(hardwareMap);
 
-        //LedLights leds = new LedLights(hardwareMap);
+        LedLights leds = new LedLights(hardwareMap);
+
+        Parameters parameters = new Parameters();
 
         DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
 
@@ -48,9 +51,11 @@ public class MainDriveProgram extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        //leds.setLed(LedLights.ledStates.BLUE);
-
+        if (Parameters.allianceColor == Parameters.Color.RED) {
+            leds.setLed(LedLights.ledStates.RED);
+        } else if (Parameters.allianceColor == Parameters.Color.BLUE) {
+            leds.setLed(LedLights.ledStates.BLUE);
+        }
 
         waitForStart();
         runtime.reset();
@@ -58,17 +63,11 @@ public class MainDriveProgram extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-
-            if (!inEndGame && getRuntime() > 90) {
-                inEndGame = true;
-                //leds.setLed(LedLights.ledStates.ENDGAME);
-            }
-
             /**
              * Driving
              */
             //Check for auto navigation requested by driver, otherwise give manual control to driver
-            if (gamepad1.dpad_up) {
+            /*if (gamepad1.dpad_up) {
                 if (rrDrive.getPosition().getX() < -30) {
                     rrDrive.navigateToCorner();
                 } else if (rrDrive.getPosition().getX() > 0) {
@@ -85,28 +84,52 @@ public class MainDriveProgram extends LinearOpMode {
                     arm.extend(LiftArm.Distance.HALF);
                     rrDrive.dropPixelMid();
                 }
+            }*/
+            if (gamepad1.dpad_down) {
+                rrDrive.updateFromDpad(-0.2, 0, 0);
+            } else if (gamepad1.dpad_up) {
+                rrDrive.updateFromDpad(0.2, 0, 0);
+            } else if (gamepad1.dpad_left) {
+                rrDrive.updateFromDpad(0, 0.2, 0);
+            } else if (gamepad1.dpad_right) {
+                rrDrive.updateFromDpad(0, -0.2, 0);
             } else {
                 rrDrive.updateMotorsFromStick(gamepad1);
-                rrDrive.update();
             }
+            rrDrive.update();
 
             //If button is pressed on gamepad, calibrate position based on middle april tag
-            if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
+            /*if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
                 AprilTagDetection detection = aprilTagDetector.getAprilTag();
                 rrDrive.calibratePos(detection);
 
                 telemetry.addData("X pos: ", 36.25 + detection.ftcPose.x);
                 telemetry.addData("Y pos: ", 55.5 - detection.ftcPose.y);
-            }
+            }*/
 
 
             /**
              * Intake
              */
             //Check if both slots are full in bucket
-            if ((colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) && (colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE)) {
+            if (colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE && colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE) {
+                //Turn on yellow color, 1 pixel=
                 reverseIntake = true;
+                leds.setLed(LedLights.ledStates.GREEN);
+            } else if (colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) {
+                leds.setLed(LedLights.ledStates.YELLOW);
+                reverseIntake = false;
             } else {
+                //Turn to alliance color
+                if (getRuntime() > 85) {
+                    leds.setLed(LedLights.ledStates.ENDGAME);
+                } else {
+                    if (Parameters.allianceColor == Parameters.Color.RED) {
+                        leds.setLed(LedLights.ledStates.RED);
+                    } else if (Parameters.allianceColor == Parameters.Color.BLUE) {
+                        leds.setLed(LedLights.ledStates.BLUE);
+                    }
+                }
                 reverseIntake = false;
             }
 
@@ -114,8 +137,10 @@ public class MainDriveProgram extends LinearOpMode {
                 //If both slot are full, outtake excess pixels
                 if (reverseIntake) {
                     intakeSystem.runIntakeSystem(-1);
+                    //leds.setLed(LedLights.ledStates.INTAKE);
                 } else {
                     intakeSystem.runIntakeSystem(1);
+                    //leds.setLed(LedLights.ledStates.INTAKE);
                 }
             } else if ((gamepad2.left_trigger > 0.5 || gamepad1.left_trigger > 0.5)) {
                 //Manual outtake
@@ -143,6 +168,23 @@ public class MainDriveProgram extends LinearOpMode {
                 arm.retract();
             }
 
+            if (gamepad2.left_stick_button){
+                arm.manualArm(-1);
+                manualSlide = true;
+            } else if (manualSlide == true && !gamepad2.left_stick_button) {
+                arm.slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                manualSlide = false;
+            }
+            
+            if (gamepad2.right_stick_button) {
+                manualHand = true;
+                arm.manualIn();
+            } else if (!gamepad2.right_stick_button && manualHand == true) {
+                manualHand = false;
+                arm.hand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                arm.hand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
 
             /**
              * Trapdoor
@@ -152,7 +194,7 @@ public class MainDriveProgram extends LinearOpMode {
             } else if (gamepad2.left_bumper && !trapdoorMoving) {
                 trapdoorMoving = true;
                 arm.openTrapdoor();
-                sleep(50);
+                sleep(74 );
                 arm.closeTrapdoor();
             } else {
                 arm.closeTrapdoor();
@@ -168,9 +210,11 @@ public class MainDriveProgram extends LinearOpMode {
             if (gamepad1.a && gamepad1.x){
                 arm.setArmDistance(LiftArm.Distance.ENDGAMESTART);
                 armOut = true;
+                leds.setLed(LedLights.ledStates.HANG);
             } else if (!gamepad1.a && armOut) {
                 arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
                 arm.holdHang();
+                leds.setLed(LedLights.ledStates.CELEBRATION);
             }
 
 
@@ -208,10 +252,11 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Telemetry data
              */
-            telemetry.addData("Servo: ", arm.plane.getPosition());
+            //telemetry.addData("Servo: ", arm.plane.getPosition());
             /*telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
             telemetry.addData("Hand power: ", arm.hand.getPower());*/
+            telemetry.addData("Servo: ", arm.purplePixel.getPosition());
 
             /*telemetry.addData("X: ", rrDrive.getPosition().getX());
             telemetry.addData("Y: ", rrDrive.getPosition().getY());
