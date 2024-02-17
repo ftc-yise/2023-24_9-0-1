@@ -112,14 +112,18 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-39.4375, -62, Math.toRadians(-90)))
-                                .lineToLinearHeading(new Pose2d(-55, -12, Math.toRadians(180)))
+                                .lineToLinearHeading(new Pose2d(-55, 12, Math.toRadians(180)))
                                 .back(60)
                                 .splineTo(new Vector2d(47, -31), Math.toRadians(0))
                                 .setReversed(false)
                                 .splineTo(new Vector2d(5, -12), Math.toRadians(180))
-                                .forward(60)
-                                .back(60)
-                                .splineTo(new Vector2d(47, -31), Math.toRadians(0))
+                                .forward(30)
+                                .splineTo(new Vector2d(-58, -20), Math.toRadians(-160))
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-28, -12), Math.toRadians(0))
+                                .back(30)
+                                .splineTo(new Vector2d(47, -36), Math.toRadians(0))
+                                .lineToLinearHeading(new Pose2d(50, -36, Math.toRadians(180)))
                                 .build()
                 );
 

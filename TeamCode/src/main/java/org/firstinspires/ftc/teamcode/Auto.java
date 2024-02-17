@@ -102,11 +102,10 @@ public class Auto extends LinearOpMode {
                 heading = 180;
                 x = -32.5;
             } else if (location == Prop.MIDDLE) {
-                y = -29;
-                x = -45;
-                heading = -130;
+                y = -32;
+                x = -42;
             } else if (location == Prop.LEFT) {
-                y = -36.0;
+                y = -37;
                 x = -49.5;
             }
         } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR){
@@ -129,9 +128,8 @@ public class Auto extends LinearOpMode {
                 heading = 180;
                 x = -32.5;
             } else if (location == Prop.MIDDLE) {
-                y = 32;
-                x = -44;
-                heading = 130;
+                y = 33;
+                x = -38;
             } else if (location == Prop.RIGHT) {
                 y = 38.0;
                 x = -43.5;
@@ -142,9 +140,6 @@ public class Auto extends LinearOpMode {
         TrajectorySequence mySequence = drive.trajectorySequenceBuilder(startPose)
                 //Wait for however long drivers want before moving
                 .waitSeconds(Parameters.WAIT)
-                .addDisplacementMarker(() -> {
-                    arm.purplePixel.setPosition(Servo.MAX_POSITION);
-                })
                 //Go to calculated position
                 .lineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)))
                 .build();
@@ -154,31 +149,31 @@ public class Auto extends LinearOpMode {
     }
 
     //Navigating to and dropping yellow pixel
-    public TrajectorySequence middleLane(SampleMecanumDrive drive, Pose2d startPose) {
+    public TrajectorySequence middleLane(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm) {
 
         TrajectorySequence redAnnoyingPixel = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .forward(3)
-                .splineTo(new Vector2d(-37, -11), Math.toRadians(180))
+                .splineTo(new Vector2d(-37, -12), Math.toRadians(180))
                 .forward(20)
                 .build();
 
         TrajectorySequence redToMiddle = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
-                .lineToLinearHeading(new Pose2d(-57, -11, Math.toRadians(180)))
+                .forward(15)
+                .lineToLinearHeading(new Pose2d(-56, -12, Math.toRadians(180)))
                 //.forward(3)
                 .build();
 
         TrajectorySequence blueAnnoyingPixel = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .forward(3)
-                .splineTo(new Vector2d(-40, 11), Math.toRadians(180))
-                .forward(17)
+                .splineTo(new Vector2d(-40, 9), Math.toRadians(180))
+                .forward(16)
                 .build();
 
         TrajectorySequence blueToMiddle = drive.trajectorySequenceBuilder(startPose)
-                .forward(10)
-                .lineToLinearHeading(new Pose2d(-57, 11, Math.toRadians(180)))
+                .forward(15)
+                .lineToLinearHeading(new Pose2d(-56, 9, Math.toRadians(180)))
                 //.forward(3)
                 .build();
 
@@ -200,13 +195,15 @@ public class Auto extends LinearOpMode {
     }
 
     //Navigating to and dropping yellow pixel
-    public TrajectorySequence yellowPixel(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm) {
+    public TrajectorySequence yellowPixel(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm, IntakeSystem intake) {
         //Position of backboard, y will change based on prop, x is constant distance from it
         double backdropX = 47;
         double backdropY = 0;
         double backdropHeading = 180;
+        double drivingY = 0;
 
         if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
+            drivingY = -10;
             if (location == Prop.RIGHT) {
                 backdropY = -42.0;
             } else if (location == Prop.MIDDLE) {
@@ -215,14 +212,16 @@ public class Auto extends LinearOpMode {
                 backdropY = -29.0;
             }
         } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
+            drivingY = -10;
             if (location == Prop.LEFT) {
-                backdropY = -30;
+                backdropY = -28;
             } else if (location == Prop.MIDDLE) {
-                backdropY = -34;
+                backdropY = -33;
             } else if (location == Prop.RIGHT) {
                 backdropY = -39;
             }
         } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
+            drivingY = 8;
             if (location == Prop.LEFT) {
                 backdropY = 42.0;
             } else if (location == Prop.MIDDLE) {
@@ -231,8 +230,9 @@ public class Auto extends LinearOpMode {
                 backdropY = 29.0;
             }
         } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
+            drivingY = 8;
             if (location == Prop.RIGHT) {
-                backdropY = 24;
+                backdropY = 23;
             } else if (location == Prop.MIDDLE) {
                 backdropY = 27;
             } else if (location == Prop.LEFT) {
@@ -249,9 +249,12 @@ public class Auto extends LinearOpMode {
                 .build();
 
         TrajectorySequence farDriveToBackdrop = drive.trajectorySequenceBuilder(startPose)
-                .back(60)
+                .lineToLinearHeading(new Pose2d(28, drivingY, Math.toRadians(180)))
+                /*.addDisplacementMarker(10, () -> {
+                    intake.runIntakeSystem(-0.5);
+                })*/
                 .addDisplacementMarker(40, () -> {
-                    arm.extend(LiftArm.Distance.LOW);
+                    arm.extend(LiftArm.Distance.AUTO);
                 })
                 .splineTo(new Vector2d(backdropX, backdropY), Math.toRadians(0))
                 .back(5)
@@ -298,14 +301,16 @@ public class Auto extends LinearOpMode {
     public TrajectorySequence driveToWhiteStack(SampleMecanumDrive drive, Pose2d startPose) {
         TrajectorySequence seqRed = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(5, -12), Math.toRadians(180))
-                .forward(62)
+                .splineTo(new Vector2d(5, -14), Math.toRadians(180))
+                .forward(40)
+                .splineTo(new Vector2d(-58, -22), Math.toRadians(-160))
                 .build();
 
         TrajectorySequence seqBlue = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(5, 6), Math.toRadians(180))
-                .forward(62)
+                .splineTo(new Vector2d(5, 7), Math.toRadians(180))
+                .forward(40)
+                .splineTo(new Vector2d(-56, 17), Math.toRadians(160))
                 .build();
         if (Parameters.allianceColor == Parameters.Color.RED) {
             return seqRed;
@@ -315,22 +320,29 @@ public class Auto extends LinearOpMode {
     }
 
     public TrajectorySequence driveToBackdrop(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm) {
-        double backdropX = 47;
+        double backdropX = 40;
+        double splineY = 0;
         double backdropY = 0;
 
         if (Parameters.allianceColor == Parameters.Color.RED) {
             backdropY = -36;
+            splineY = -13;
         } else if (Parameters.allianceColor == Parameters.Color.BLUE) {
+            splineY = 6;
             backdropY = 27;
         }
 
         TrajectorySequence seq = drive.trajectorySequenceBuilder(startPose)
-                .back(60)
-                .addDisplacementMarker(40, () -> {
+                .setReversed(true)
+                .splineTo(new Vector2d(-28, splineY), Math.toRadians(0))
+                .back(45)
+                .splineTo(new Vector2d(backdropX, backdropY), Math.toRadians(0))
+                .waitSeconds(0.5)
+                .lineToLinearHeading(new Pose2d(48, backdropY, Math.toRadians(180)))
+                .addDisplacementMarker(50, () -> {
                     arm.extend(LiftArm.Distance.LOW);
                 })
-                .splineTo(new Vector2d(47, backdropY), Math.toRadians(0))
-                .back(3)
+
                 .build();
 
         return seq;
@@ -405,28 +417,26 @@ public class Auto extends LinearOpMode {
         //Driving to backdrop/getting white stack first
         if (Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
             //Drive to white stack, drive to backdrop, park
-            TrajectorySequence driveToMiddleLane = middleLane(drive, dropPurplePixel.end());
-            TrajectorySequence driveToBackdrop = yellowPixel(drive, driveToMiddleLane.end(), arm);
+            TrajectorySequence driveToMiddleLane = middleLane(drive, dropPurplePixel.end(), arm);
+            TrajectorySequence driveToBackdrop = yellowPixel(drive, driveToMiddleLane.end(), arm, intake);
             TrajectorySequence pickupWhitePixels = driveToWhiteStack(drive, driveToBackdrop.end());
             TrajectorySequence returnToBackdrop = driveToBackdrop(drive, pickupWhitePixels.end(), arm);
-            TrajectorySequence park = parking(drive, returnToBackdrop.end());
 
             drive.followTrajectorySequence(driveToMiddleLane);
 
             //Intake
-            int intakeLoops = 0;
+            /*int intakeLoops = 0;
             while (colorSensors.getBackPixelColor() == DriveColorExample.Colors.NONE || colorSensors.getFrontPixelColor() == DriveColorExample.Colors.NONE) {
-                if (intakeLoops >= 3) {
+                if (intakeLoops >= 5) {
                     break;
                 } else {
                 intakeLoops++;
-                intake.runIntakeSystem(1);
+                intake.runIntakeSystem(0.75);
                 sleep(400);
-                intake.runIntakeSystem(-0.5);
+                intake.runIntakeSystem(-0.25);
                 sleep(100);
                 }
-            }
-            intake.runIntakeSystem(-0.5);
+            }*/
 
             drive.followTrajectorySequence(driveToBackdrop);
             intake.runIntakeSystem(0);
@@ -435,18 +445,19 @@ public class Auto extends LinearOpMode {
             sleep(500);
             arm.retract();
             arm.closeTrapdoor();
+            intake.runIntakeSystem(0.75);
 
             drive.followTrajectorySequence(pickupWhitePixels);
 
-            intakeLoops = 0;
+            int intakeLoops = 0;
             while (colorSensors.getBackPixelColor() == DriveColorExample.Colors.NONE || colorSensors.getFrontPixelColor() == DriveColorExample.Colors.NONE) {
                 if (intakeLoops >= 3) {
                     break;
                 } else {
                     intakeLoops++;
-                    intake.runIntakeSystem(1);
+                    intake.runIntakeSystem(0.75);
                     sleep(400);
-                    intake.runIntakeSystem(-0.5);
+                    intake.runIntakeSystem(-0.25);
                     sleep(100);
                 }
             }
@@ -466,7 +477,7 @@ public class Auto extends LinearOpMode {
 
         } else {
 
-            TrajectorySequence driveToBackdrop = yellowPixel(drive, dropPurplePixel.end(), arm);
+            TrajectorySequence driveToBackdrop = yellowPixel(drive, dropPurplePixel.end(), arm, intake);
             TrajectorySequence park = parking(drive, driveToBackdrop.end());
 
             drive.followTrajectorySequence(driveToBackdrop);

@@ -166,7 +166,9 @@ public class MainDriveProgram extends LinearOpMode {
                 arm.holdArm();
             } else if (gamepad2.dpad_down) {
                 arm.retract();
-            } else if (gamepad2.left_stick_button){
+            }
+
+            if (gamepad2.left_stick_button){
                 arm.manualArm(-1);
                 manualSlide = true;
             } else if (manualSlide == true && !gamepad2.left_stick_button) {
@@ -192,7 +194,7 @@ public class MainDriveProgram extends LinearOpMode {
             } else if (gamepad2.left_bumper && !trapdoorMoving) {
                 trapdoorMoving = true;
                 arm.openTrapdoor();
-                sleep(70 );
+                sleep(74 );
                 arm.closeTrapdoor();
             } else {
                 arm.closeTrapdoor();
@@ -254,6 +256,7 @@ public class MainDriveProgram extends LinearOpMode {
             /*telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
             telemetry.addData("Hand power: ", arm.hand.getPower());*/
+            telemetry.addData("Servo: ", arm.purplePixel.getPosition());
 
             /*telemetry.addData("X: ", rrDrive.getPosition().getX());
             telemetry.addData("Y: ", rrDrive.getPosition().getY());
