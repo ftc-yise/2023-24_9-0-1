@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.LaserRoadrunner.RRAbstarctionLayer;
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.opencv.core.Mat;
@@ -16,6 +18,9 @@ public class RoadRunnerDriving {
 
     //Drive class
     SampleMecanumDrive drive;
+
+    //Odom class
+    RRAbstarctionLayer laser;
 
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
@@ -29,6 +34,9 @@ public class RoadRunnerDriving {
     //Declare the constructor for the class
     public RoadRunnerDriving(HardwareMap hardwareMap) {
         drive = new SampleMecanumDrive(hardwareMap);
+
+        laser = new RRAbstarctionLayer(hardwareMap);
+
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
         drive.setPoseEstimate(PoseStorage.currentPose);
@@ -36,11 +44,14 @@ public class RoadRunnerDriving {
         // set default value for speed
         currentSpeed = Speeds.NORMAL;
         speedMultiplier = 1;
+        x = laser.getX();
+        y = laser.getY();
+        heading = laser.getZ();
     }
 
-    double x = 0;
-    double y = 0;
-    double heading = 0;
+    double x;
+    double y;
+    double heading;
 
     //Drives the robot based on gamepad input
     public void updateMotorsFromStick(Gamepad gamepad) {

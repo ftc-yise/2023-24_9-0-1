@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.demobotdrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,8 +22,7 @@ public class BeelineDrive extends LinearOpMode {
     public float speedmulti = .5f;
     public float Yout = 0;
 
-
-    //private Servo fireServo = null;
+    private Servo ser;
     //private CRServo barrel = null;
     TouchSensor limit;
 
@@ -35,7 +35,7 @@ public class BeelineDrive extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "LeftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
-        //fireServo = hardwareMap.get(Servo.class, "fire_servo");
+        ser = hardwareMap.get(Servo.class, "ser");
         //barrel = hardwareMap.get(CRServo.class, "barrel" );
 
         // Most robots need the motors on one side to be reversed to drive forward.
@@ -45,7 +45,7 @@ public class BeelineDrive extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        //fireServo.setDirection(Servo.Direction.FORWARD);
+        ser.setDirection(Servo.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
 
@@ -64,12 +64,6 @@ public class BeelineDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            if(gamepad1.y && speedmulti == 1){
-                speedmulti = .5f;
-            } else if(gamepad1.y && speedmulti == .5f){
-                speedmulti = 1f;
-            }
-
             telemetry.addData("motor Power:", leftBackDrive.getPower());
 
 
@@ -78,43 +72,45 @@ public class BeelineDrive extends LinearOpMode {
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             //double vertical   = -gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
-            double vertical     =  gamepad1.left_stick_y;
-            double turn     =  gamepad1.left_stick_x;
+            double turn     =  .5 * gamepad1.left_stick_y;
+            double vertical     =  .5 * gamepad1.left_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = vertical  - turn * speedmulti;
-            double rightFrontPower = vertical  + turn * speedmulti;
-            double leftBackPower   = vertical  - turn * speedmulti;
-            double rightBackPower  = vertical  + turn * speedmulti;
+            double leftPower  = vertical  - turn;
+            double rightPower = vertical  + turn;
+
+            // Speed Boost (Adjust value as needed)
+            if (gamepad1.a) {
+                leftPower *= 1.5f;
+                rightPower *= 1.5f;
+            }
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
 
-            
-            /* verticle =y
-               horizontal = x
-               turn = r*/
+
+            if (gamepad1.left_bumper) {
+                ser.setPosition(Servo.MIN_POSITION);
+            } else if (gamepad1.right_bumper) {
+                ser.setPosition(Servo.MAX_POSITION);
+            }
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftPower  /= max;
+                rightPower /= max;
             }
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftBackDrive.setPower(leftPower);
+            rightBackDrive.setPower(rightPower);
+            leftFrontDrive.setPower(leftPower);
+            rightFrontDrive.setPower(rightPower);
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Front left/Right", rightPower);
+            telemetry.addData("Back  left/Right", rightPower);
             //telemetry.addData("limitSwitchState", limitSwitchState);
 
 
