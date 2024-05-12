@@ -99,17 +99,15 @@ public class OdometrySensorRoadrunnerTest extends LinearOpMode
             motorBL.setPower(powerBL);
             motorBR.setPower(powerBR);
 
-            rrDrive.update();
-
             SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
 
             telemetry.addData("X (inch)", pose.x);
             telemetry.addData("Y (inch)", pose.y);
             telemetry.addData("H (Deg)", pose.h);
 
-            telemetry.addData("RX: ", rrDrive.getPosition().getX());
-            telemetry.addData("RY: ", rrDrive.getPosition().getY());
-            telemetry.addData("RHeading: ", rrDrive.getPosition().getHeading());
+            telemetry.addData("RX: ", rrDrive.getPositionRR().getX());
+            telemetry.addData("RY: ", rrDrive.getPositionRR().getY());
+            telemetry.addData("RHeading: ", rrDrive.getPositionRR().getHeading());
 
             telemetry.update();
 

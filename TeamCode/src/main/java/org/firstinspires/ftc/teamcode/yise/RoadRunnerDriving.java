@@ -35,7 +35,7 @@ public class RoadRunnerDriving {
     public RoadRunnerDriving(HardwareMap hardwareMap) {
         drive = new SampleMecanumDrive(hardwareMap);
 
-        laser = new RRAbstarctionLayer(hardwareMap);
+        laser = new RRAbstarctionLayer(hardwareMap, drive);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
@@ -44,9 +44,6 @@ public class RoadRunnerDriving {
         // set default value for speed
         currentSpeed = Speeds.NORMAL;
         speedMultiplier = 1;
-        x = laser.getX();
-        y = laser.getY();
-        heading = laser.getZ();
     }
 
     double x;
@@ -91,9 +88,14 @@ public class RoadRunnerDriving {
 
     //Accessor to get the robot position
     public Pose2d getPosition() {
-        return drive.getPoseEstimate();
+        //return drive.getPoseEstimate();
+        return laser.getUpdatedPOSE();
     }
 
+    public Pose2d getPositionRR() {
+        //return drive.getPoseEstimate();
+        return drive.getPoseEstimate();
+    }
     //Calibrate position using the middle april tag
     /*public void calibratePos(AprilTagDetection detection) {
         if (Parameters.allianceColor == Parameters.Color.RED) {

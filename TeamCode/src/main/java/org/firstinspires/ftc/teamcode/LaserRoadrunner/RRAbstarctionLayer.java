@@ -5,12 +5,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 //unused but may potentially have a use
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 
 /**
  * This class provides an abstraction layer for the SparkFun OTOS odometry sensor.
@@ -29,10 +24,14 @@ public class RRAbstarctionLayer {
      * Initializes the odometry sensor and performs necessary configuration.
      *
      * @param hardwareMap The hardware map used to access robot hardware
+     * @param drive
      */
 
     //Declare the constructor for the class
-    public RRAbstarctionLayer(HardwareMap hardwareMap) {
+    public RRAbstarctionLayer(HardwareMap hardwareMap, SampleMecanumDrive drive) {
+
+        this.drive = drive; // Use the drive object passed as a parameter
+
         // Get the SparkFunOTOS sensor from the hardware map
         myOdometrySensor = hardwareMap.get(SparkFunOTOS.class, "sfe_otos");
 
@@ -88,4 +87,26 @@ public class RRAbstarctionLayer {
         SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
         return Math.toRadians(pose.h); // Convert to radians if needed
     }
+
+    // Update pose estimate (if applicable)
+    public void updatePoseEstimate() {
+        Pose2d currentPose = new Pose2d(getX(), getY(), getZ());
+        drive.setPoseEstimate(currentPose);
+    }
+
+    public Pose2d getUpdatedPOSE() {
+        updatePoseEstimate();
+
+        return drive.getPoseEstimate();
+    }
+
+    public void calibrateImu() {
+        myOdometrySensor.calibrateImu();
+    }
+
+    public void resetTracking() {
+        myOdometrySensor.resetTracking();
+        // SparkFunOTOS.otos_pose2d_t newPose = myOdometrySensor.new otos_pose2d_t(5, 10, 45);
+    }
+
 }

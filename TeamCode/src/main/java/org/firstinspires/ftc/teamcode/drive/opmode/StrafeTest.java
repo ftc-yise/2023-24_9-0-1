@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+//YISE LASER ODOM CLASS
+import org.firstinspires.ftc.teamcode.LaserRoadrunner.RRAbstarctionLayer;
+
 /*
  * This is a simple routine to test translational drive capabilities.
  */
@@ -25,7 +28,10 @@ public class StrafeTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .strafeRight(DISTANCE)
@@ -37,7 +43,9 @@ public class StrafeTest extends LinearOpMode {
 
         drive.followTrajectory(trajectory);
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        laser.updatePoseEstimate();
+
+        Pose2d poseEstimate = laser.getUpdatedPOSE();
         telemetry.addData("finalX", poseEstimate.getX());
         telemetry.addData("finalY", poseEstimate.getY());
         telemetry.addData("finalHeading", poseEstimate.getHeading());

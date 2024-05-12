@@ -11,6 +11,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
+
+//YISE LASER ODOM CLASS
+import org.firstinspires.ftc.teamcode.LaserRoadrunner.RRAbstarctionLayer;
+
 /**
  * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
  * LATERAL_DISTANCE value. The LATERAL_DISTANCE is the center-to-center distance of the parallel
@@ -70,7 +74,10 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
             RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
@@ -103,7 +110,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 
             drive.update();
 
-            double heading = drive.getPoseEstimate().getHeading();
+            double heading = laser.getUpdatedPOSE().getHeading();
             double deltaHeading = heading - lastHeading;
 
             headingAccumulator += Angle.normDelta(deltaHeading);

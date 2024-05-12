@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -16,9 +15,9 @@ import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.PoseStorage;
 import org.firstinspires.ftc.teamcode.yise.TensorflowVision;
 
-import org.firstinspires.ftc.teamcode.yise.Parameters;
+import org.firstinspires.ftc.teamcode.LaserRoadrunner.RRAbstarctionLayer;
 
-import java.util.Queue;
+import org.firstinspires.ftc.teamcode.yise.Parameters;
 
 
 @Autonomous(name="Autonomous", group="Linear Opmode")
@@ -359,6 +358,8 @@ public class Auto extends LinearOpMode {
         DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
         IntakeSystem intake = new IntakeSystem(hardwareMap);
 
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
+
         leds.setLed(LedLights.ledStates.DARK);
         //Sense cones
 
@@ -490,6 +491,7 @@ public class Auto extends LinearOpMode {
             drive.followTrajectorySequence(park);
         }
 
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        //PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseStorage.currentPose = laser.getUpdatedPOSE();
     }
 }

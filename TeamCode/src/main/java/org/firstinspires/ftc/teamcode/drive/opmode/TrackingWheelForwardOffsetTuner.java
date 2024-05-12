@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
+//YISE LASER ODOM CLASS
+import org.firstinspires.ftc.teamcode.LaserRoadrunner.RRAbstarctionLayer;
 /**
  * This routine determines the effective forward offset for the lateral tracking wheel.
  * The procedure executes a point turn at a given angle for a certain number of trials,
@@ -47,7 +49,10 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
             RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
@@ -78,7 +83,7 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
             drive.turnAsync(Math.toRadians(ANGLE));
 
             while (!isStopRequested() && drive.isBusy()) {
-                double heading = drive.getPoseEstimate().getHeading();
+                double heading = laser.getUpdatedPOSE().getHeading();
                 headingAccumulator += Angle.norm(heading - lastHeading);
                 lastHeading = heading;
 
@@ -86,7 +91,7 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
             }
 
             double forwardOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSET +
-                    drive.getPoseEstimate().getY() / headingAccumulator;
+                    laser.getUpdatedPOSE().getY() / headingAccumulator;
             forwardOffsetStats.add(forwardOffset);
 
             sleep(DELAY);
