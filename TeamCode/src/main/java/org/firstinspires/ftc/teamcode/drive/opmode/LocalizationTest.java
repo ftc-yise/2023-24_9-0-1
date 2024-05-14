@@ -24,7 +24,7 @@ public class LocalizationTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -47,7 +47,6 @@ public class LocalizationTest extends LinearOpMode {
             drive.setWeightedDrivePower(new Pose2d( gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
 
             drive.update();
-            //laser.updatePoseEstimate();
 
             Pose2d poseEstimate = laser.getUpdatedPOSE();
             telemetry.addData("x", poseEstimate.getX());

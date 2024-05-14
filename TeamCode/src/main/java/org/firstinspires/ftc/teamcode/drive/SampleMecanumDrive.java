@@ -87,7 +87,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
 
+
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+        laser = new RRAbstarctionLayer(hardwareMap);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -167,7 +170,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
-                trajectorySequenceBuilder(getPoseEstimate())
+                trajectorySequenceBuilder(laser.getUpdatedPOSE())
                         .turn(angle)
                         .build()
                 /*trajectorySequenceBuilder(laser.getUpdatedPOSE())
@@ -204,13 +207,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
+        return
+                trajectorySequenceRunner.getLastPoseError();
     }
 
     public void update() {
         updatePoseEstimate();
         //DriveSignal signal = trajectorySequenceRunner.update(laser.getUpdatedPOSE(), getPoseVelocity());
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        DriveSignal signal = trajectorySequenceRunner.update(laser.getUpdatedPOSE(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
 

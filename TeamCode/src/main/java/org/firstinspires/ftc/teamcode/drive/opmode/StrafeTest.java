@@ -31,7 +31,7 @@ public class StrafeTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .strafeRight(DISTANCE)

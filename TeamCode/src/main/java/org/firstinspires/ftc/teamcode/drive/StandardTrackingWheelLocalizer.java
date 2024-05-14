@@ -54,13 +54,20 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-          // this is the real hardware confiq that we use
-         // motor port 2
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        // this is the real hardware confiq that we used in the 2024 season
+        // motor port 2
+        /*leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         // motor port 1
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightFrontDrive"));
         // motor port 0
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightBackDrive"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightBackDrive"));*/
+
+        // motor port 2
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "slide"));
+        // motor port 1
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "deletethis"));
+        // motor port 0
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftBackDrive"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 

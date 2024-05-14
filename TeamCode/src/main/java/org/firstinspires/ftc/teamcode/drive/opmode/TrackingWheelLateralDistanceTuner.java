@@ -77,7 +77,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap);
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
             RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "

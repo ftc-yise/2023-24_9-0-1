@@ -358,7 +358,7 @@ public class Auto extends LinearOpMode {
         DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
         IntakeSystem intake = new IntakeSystem(hardwareMap);
 
-        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap, drive);
+        RRAbstarctionLayer laser = new RRAbstarctionLayer(hardwareMap);
 
         leds.setLed(LedLights.ledStates.DARK);
         //Sense cones
@@ -418,10 +418,20 @@ public class Auto extends LinearOpMode {
         //Driving to backdrop/getting white stack first
         if (Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
             //Drive to white stack, drive to backdrop, park
+            telemetry.addData("pose", laser.getUpdatedPOSE());
+            telemetry.update();
             TrajectorySequence driveToMiddleLane = middleLane(drive, dropPurplePixel.end(), arm);
+            telemetry.addData("pose", laser.getUpdatedPOSE());
+            telemetry.update();
             TrajectorySequence driveToBackdrop = yellowPixel(drive, driveToMiddleLane.end(), arm, intake);
+            telemetry.addData("pose", laser.getUpdatedPOSE());
+            telemetry.update();
             TrajectorySequence pickupWhitePixels = driveToWhiteStack(drive, driveToBackdrop.end());
+            telemetry.addData("pose", laser.getUpdatedPOSE());
+            telemetry.update();
             TrajectorySequence returnToBackdrop = driveToBackdrop(drive, pickupWhitePixels.end(), arm);
+            telemetry.addData("pose", laser.getUpdatedPOSE());
+            telemetry.update();
 
             drive.followTrajectorySequence(driveToMiddleLane);
 

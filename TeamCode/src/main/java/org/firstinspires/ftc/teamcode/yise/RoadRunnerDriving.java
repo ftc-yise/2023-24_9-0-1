@@ -35,7 +35,7 @@ public class RoadRunnerDriving {
     public RoadRunnerDriving(HardwareMap hardwareMap) {
         drive = new SampleMecanumDrive(hardwareMap);
 
-        laser = new RRAbstarctionLayer(hardwareMap, drive);
+        laser = new RRAbstarctionLayer(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));

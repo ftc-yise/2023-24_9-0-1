@@ -57,10 +57,10 @@ public class OdometrySensorRoadrunnerTest extends LinearOpMode
 //        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         myOdometrySensor = hardwareMap.get(SparkFunOTOS.class, "sfe_otos");
-        SparkFunOTOS.otos_pose2d_t offsetPose = myOdometrySensor.new otos_pose2d_t(-2.375, -7.5, 0);
+        SparkFunOTOS.otos_pose2d_t offsetPose = myOdometrySensor.new otos_pose2d_t(6.75, 2.75, 0);
         myOdometrySensor.setOffset(offsetPose);
         myOdometrySensor.setAngularScalar(0.994);
-        myOdometrySensor.setLinearScalar(0.990);
+        myOdometrySensor.setLinearScalar(0.9);
 
         waitForStart();
 
@@ -100,6 +100,8 @@ public class OdometrySensorRoadrunnerTest extends LinearOpMode
             motorBR.setPower(powerBR);
 
             SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
+
+            rrDrive.update();
 
             telemetry.addData("X (inch)", pose.x);
             telemetry.addData("Y (inch)", pose.y);
