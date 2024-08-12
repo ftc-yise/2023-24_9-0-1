@@ -14,7 +14,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
  */
 public class RRAbstarctionLayer {
     // Reference to the SparkFunOTOS sensor object
-    SparkFunOTOS myOdometrySensor;
+    SparkFunOTOS optical;
 
     Pose2d currentPoseEstimate;
 
@@ -30,26 +30,26 @@ public class RRAbstarctionLayer {
     public RRAbstarctionLayer(HardwareMap hardwareMap) {
 
         // Get the SparkFunOTOS sensor from the hardware map
-        myOdometrySensor = hardwareMap.get(SparkFunOTOS.class, "sfe_otos");
+        optical = hardwareMap.get(SparkFunOTOS.class, "sfe_otos");
 
         // Set the offset location of the sensor relative to the robot center
-        SparkFunOTOS.otos_pose2d_t offsetPose = myOdometrySensor.new otos_pose2d_t(3.7, -.55, 0);
-        myOdometrySensor.setOffset(offsetPose);
+        SparkFunOTOS.otos_pose2d_t offsetPose = optical.new otos_pose2d_t(3.7, -.55, 0);
+        optical.setOffset(offsetPose);
 
         // Set scalar correction factors for translation and rotation
-        myOdometrySensor.setLinearScalar(1.0);
-        myOdometrySensor.setAngularScalar(1.0);
+        optical.setLinearScalar(1.0);
+        optical.setAngularScalar(1.0);
 
         // Calibrate IMU. Must be stationary and flat during this time! By default, this will take
         // about 612ms, but can be made faster by taking fewer samples
-        myOdometrySensor.calibrateImu();
+        optical.calibrateImu();
 
         // Reset tracking algorithm on OTOS
-        myOdometrySensor.resetTracking();
+        optical.resetTracking();
 
         // Set known location on field
-        SparkFunOTOS.otos_pose2d_t newPose = myOdometrySensor.new otos_pose2d_t(50, 50, 0);
-        myOdometrySensor.setPosition(newPose);
+        SparkFunOTOS.otos_pose2d_t newPose = optical.new otos_pose2d_t(50, 50, 0);
+        optical.setPosition(newPose);
 
 
 
@@ -64,42 +64,53 @@ public class RRAbstarctionLayer {
      *
      * @return The X,Y,Z coordinate (inches/degrees) from the odometry sensor
      */    public double getX() {
-        SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
+        SparkFunOTOS.otos_pose2d_t pose = optical.getPosition();
         return pose.x;
     }
 
     public double getY() {
-        SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
+        SparkFunOTOS.otos_pose2d_t pose = optical.getPosition();
         return pose.y;
     }
 
     public double getZ() { // Assuming z represents heading (angle)
-        SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
+        SparkFunOTOS.otos_pose2d_t pose = optical.getPosition();
         return Math.toRadians(pose.h); // Convert to radians if needed
     }
 
 
     // Update pose estimate (if applicable)
-    public void updatePoseEstimate() {
+    public void updatePoseEstimateRR() {
         currentPoseEstimate = new Pose2d(getX(), getY(), getZ());
     }
 
     public Pose2d getUpdatedPOSE() {
-    updatePoseEstimate();
+    updatePoseEstimateRR();
 
         return currentPoseEstimate;
     }
 
-
-
-
     public void calibrateImu() {
-        myOdometrySensor.calibrateImu();
+        optical.calibrateImu();
     }
 
     public void resetTracking() {
-        myOdometrySensor.resetTracking();
+        optical.resetTracking();
         // SparkFunOTOS.otos_pose2d_t newPose = myOdometrySensor.new otos_pose2d_t(5, 10, 45);
     }
+
+   /* public PoseVelocity2d updatePoseEstimate() {
+        SparkFunOTOS.otos_pose2d_t opticalPose = optical.getPosition();
+        Pose2d pose = new Pose2d(opticalPose.x, opticalPose.y, opticalPose.h);
+
+        poseHistory.add(pose);
+        while (poseHistory.size() > 100) {
+            poseHistory.removeFirst();
+        }
+
+        FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+
+        return new PoseVelocity2d(new Vector2d(0, 0), 0);
+    }*/
 
 }
