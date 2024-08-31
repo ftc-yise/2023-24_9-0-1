@@ -43,7 +43,7 @@ public class StrafeTest extends LinearOpMode {
 
         drive.followTrajectory(trajectory);
 
-        laser.updatePoseEstimate();
+        //laser.updatePoseEstimate();
 
         Pose2d poseEstimate = laser.getUpdatedPOSE();
         telemetry.addData("finalX", poseEstimate.getX());

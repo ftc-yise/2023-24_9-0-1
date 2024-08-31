@@ -8,9 +8,20 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 @TeleOp
 public class OdometrySensorTest extends LinearOpMode
 {
+
+    public double pi = Math.PI;
+
+    public double piOverTwo = Math.PI/2;
+
+    private double AngleA = pi;
+    //private double DeadzoneA = 0.12; original value of dead zone
+    private double DeadzoneA = .06;
+
     public static double SIDE_LENGTH = 16;
 
     DcMotorEx motorFL;
@@ -37,10 +48,10 @@ public class OdometrySensorTest extends LinearOpMode
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        motorFL = hardwareMap.get(DcMotorEx.class, "left_Front");
-        motorFR = hardwareMap.get(DcMotorEx.class, "right_Front");
-        motorBL = hardwareMap.get(DcMotorEx.class, "left_Back");
-        motorBR = hardwareMap.get(DcMotorEx.class, "right_Back");
+        motorFL = hardwareMap.get(DcMotorEx.class, "LeftFrontDrive");
+        motorFR = hardwareMap.get(DcMotorEx.class, "RightFrontDrive");
+        motorBL = hardwareMap.get(DcMotorEx.class, "LeftBackDrive");
+        motorBR = hardwareMap.get(DcMotorEx.class, "RightBackDrive");
 
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -62,14 +73,50 @@ public class OdometrySensorTest extends LinearOpMode
 
         while (opModeIsActive())
         {
-            double forward = -gamepad1.left_stick_y;
-            double sideways = gamepad1.left_stick_x;
-            double turn = -gamepad1.right_stick_x;
+            SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
+            double theta = pose.h + Math.PI;
 
-            double powerFL = forward + sideways - turn;
-            double powerFR = forward - sideways + turn;
-            double powerBL = forward - sideways - turn;
-            double powerBR = forward + sideways + turn;
+
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            //double vertical   = -gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
+
+            double horizontal =  gamepad1.left_stick_x;
+            double vertical     =  gamepad1.left_stick_y * -1;
+            double turnR = 0;
+            double turnL = 0;
+
+
+            /*if (gamepad1.b && theta % (Math.PI/2) > 0.01) {
+                turn = (theta % (Math.PI/2)) * 2;
+            } else if (!gamepad1.b) {
+                turn = gamepad1.right_stick_x;
+            }*/
+
+            if (gamepad1.dpad_up && theta > AngleA + DeadzoneA) {
+                turnR = (((theta - AngleA) - DeadzoneA) / -piOverTwo);
+                //needs to end in positive value
+                //turnR = 1;
+            }else if (gamepad1.dpad_up && theta < AngleA - DeadzoneA) {
+                //CURRENT VERSION of the auto lock code
+                turnL = (((theta - AngleA) - DeadzoneA) / piOverTwo);
+                //needs to end in negative value
+                //turn = .65;
+            } else if (!gamepad1.dpad_down && !gamepad1.dpad_up && !gamepad1.dpad_right && !gamepad1.dpad_left) {
+                turnR = 0;
+                turnL = gamepad1.right_stick_x;
+            }
+
+
+            double horizontalOut = (horizontal * Math.cos(theta)) - (vertical * Math.sin(theta));
+            double verticalOut = (vertical * Math.cos(theta)) + (horizontal * Math.sin(theta));
+
+
+            double powerFL  = (verticalOut - horizontalOut + turnR - turnL) * 0.5;
+            double powerFR = (verticalOut + horizontalOut - turnR + turnL) * 0.5;
+            double powerBL   = (verticalOut + horizontalOut + turnR - turnL) * 0.5;
+            double powerBR  = (verticalOut - horizontalOut - turnR + turnL) * 0.5;
+
+
 
             if (gamepad1.left_bumper)
             {
@@ -84,11 +131,17 @@ public class OdometrySensorTest extends LinearOpMode
             motorBL.setPower(powerBL);
             motorBR.setPower(powerBR);
 
-            SparkFunOTOS.otos_pose2d_t pose = myOdometrySensor.getPosition();
-
             telemetry.addData("X (inch)", pose.x);
             telemetry.addData("Y (inch)", pose.y);
             telemetry.addData("H (Deg)", pose.h);
+
+            telemetry.addData("Heading", "%.2f Radians", theta);
+
+            telemetry.addData("Horizontal input", gamepad1.left_stick_x * -1);
+            telemetry.addData("Vertical input: ", gamepad1.left_stick_y * -1);
+            telemetry.addData("Turn input: ", gamepad1.right_stick_x);
+            telemetry.addData("Hertical out: ", verticalOut);
+            telemetry.addData("Vorizontal out: ", horizontalOut);
             telemetry.update();
 
             double bx = pose.x;
