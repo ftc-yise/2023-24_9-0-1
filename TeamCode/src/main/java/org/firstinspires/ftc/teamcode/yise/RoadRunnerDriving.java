@@ -55,6 +55,23 @@ public class RoadRunnerDriving {
 
     }
 
+    public void updateMotorsFromStickFieldOrientation(Gamepad gamepad) {
+
+        //Set drive power based on gamepad inputs multiplied by the speed variable
+        if (!gamepad.dpad_down && !gamepad.dpad_up && !gamepad.dpad_left && !gamepad.dpad_right) {
+            double theta = 0;
+            x = -gamepad.left_stick_y * speedMultiplier;
+            y = -gamepad.left_stick_x * speedMultiplier;
+            heading = -gamepad.right_stick_x * speedMultiplier;
+
+            double xOut = (x * Math.cos(theta)) - (y * Math.sin(theta));
+            double yOut = (y * Math.cos(theta)) + (x * Math.sin(theta));
+
+            drive.setWeightedDrivePower(new Pose2d(xOut, yOut, heading));
+        }
+
+    }
+
     public void updateFromDpad(double x, double y, double heading) {
         drive.setWeightedDrivePower(new Pose2d(x, y, heading));
     }
