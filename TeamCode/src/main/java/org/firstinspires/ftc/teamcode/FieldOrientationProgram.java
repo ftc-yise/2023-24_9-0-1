@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.Parameters;
 import org.firstinspires.ftc.teamcode.yise.RoadRunnerDriving;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+import org.firstinspires.ftc.teamcode.SparkFunOTOS;
 @TeleOp(name="fieldCentric drive", group="Linear Opmode")
 public class FieldOrientationProgram extends LinearOpMode {
 
@@ -94,7 +94,7 @@ public class FieldOrientationProgram extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 rrDrive.updateFromDpad(0, -0.2, 0);
             } else {
-                rrDrive.updateMotorsFromStick(gamepad1);
+                rrDrive.updateMotorsFromStickFieldOrientation(gamepad1);
             }
             rrDrive.update();
 

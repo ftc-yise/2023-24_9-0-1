@@ -55,10 +55,10 @@ public class RomeoStrafeDrive extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = forward + strafe + turn;
-            double rightFrontPower = forward - strafe - turn;
-            double leftBackPower   = forward - strafe + turn;
-            double rightBackPower  = forward + strafe - turn;
+            double leftFrontPower  = forward - strafe + turn;
+            double rightFrontPower = forward + strafe - turn;
+            double leftBackPower   = forward + strafe + turn;
+            double rightBackPower  = forward - strafe - turn;
 
             if (gamepad1.left_trigger > .75) {
                 plane.setPosition(Servo.MIN_POSITION);

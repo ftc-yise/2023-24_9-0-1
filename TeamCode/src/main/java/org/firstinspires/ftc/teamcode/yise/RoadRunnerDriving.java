@@ -10,12 +10,16 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.yise.RRAbstarctionLayer;
+
 import org.opencv.core.Mat;
 
 public class RoadRunnerDriving {
 
     //Drive class
     SampleMecanumDrive drive;
+
+    RRAbstarctionLayer laser;
 
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
@@ -59,7 +63,7 @@ public class RoadRunnerDriving {
 
         //Set drive power based on gamepad inputs multiplied by the speed variable
         if (!gamepad.dpad_down && !gamepad.dpad_up && !gamepad.dpad_left && !gamepad.dpad_right) {
-            double theta = 0;
+            double theta = laser.getZ() + Math.PI;
             x = -gamepad.left_stick_y * speedMultiplier;
             y = -gamepad.left_stick_x * speedMultiplier;
             heading = -gamepad.right_stick_x * speedMultiplier;
