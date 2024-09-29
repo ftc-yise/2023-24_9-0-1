@@ -109,7 +109,7 @@ public class SubsystemTest extends LinearOpMode {
             /**
              * Arm slides
              */
-            if (gamepad1.dpad_up){
+           /* if (gamepad1.dpad_up){
                 //rrDrive.pixelDropRedFar();
                 arm.extend(LiftArm.Distance.FULL);
             } else if (gamepad1.dpad_right){
@@ -117,7 +117,7 @@ public class SubsystemTest extends LinearOpMode {
                 arm.extend(LiftArm.Distance.HALF);
             } else if (gamepad1.dpad_down) {
                 arm.retract();
-            }
+            }*/
 
             /**
              * Trapdoor
@@ -135,13 +135,13 @@ public class SubsystemTest extends LinearOpMode {
             /**
              * hang
              */
-            if (gamepad1.a){
+            /*if (gamepad1.a){
                 arm.setArmDistance(LiftArm.Distance.ENDGAMESTART);
                 ALetGo = true;
             } else if (!gamepad1.a && ALetGo) {
                 arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
                 arm.holdHang();
-            }
+            }*/
 
             /**
             * plane launcher

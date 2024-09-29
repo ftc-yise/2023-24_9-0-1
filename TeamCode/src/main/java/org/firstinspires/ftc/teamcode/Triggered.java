@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.yise.RRAbstarctionLayer;
-@TeleOp(name="Field Centric DriveV2", group="Linear Opmode")
-public class FieldOrientationProgram extends LinearOpMode {
+@TeleOp(name="Throttles", group="Linear Opmode")
+public class Triggered extends LinearOpMode {
 
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -53,9 +53,9 @@ public class FieldOrientationProgram extends LinearOpMode {
         while (opModeIsActive()) {
 
             double theta = laser.getZ() + Math.PI;
-            double x = (gamepad1.left_stick_x * speedMultiplier);
-            double y = gamepad1.left_stick_y * speedMultiplier;
-            double heading = gamepad1.right_stick_x *.75 * speedMultiplier;
+            double x = gamepad2.left_trigger;
+            double y = gamepad2.right_trigger;
+            double heading = 0;
 
             if (gamepad1.dpad_left){
                 x = -1 * speedMultiplier;
@@ -73,16 +73,16 @@ public class FieldOrientationProgram extends LinearOpMode {
             double xOut = (x * Math.cos(theta)) - (y * Math.sin(theta));
             double yOut = (y * Math.cos(theta)) + (x * Math.sin(theta));
 
-            double leftFrontPower  = y + x - heading;
-            double rightFrontPower = y - x + heading;
-            double leftBackPower   = y - x - heading;
-            double rightBackPower  = y + x + heading;
+            double leftFrontPower  = x - heading;
+            double rightFrontPower = y + heading;
+            double leftBackPower   = x - heading;
+            double rightBackPower  = y + heading;
 
            /*double leftFrontPower  = yOut - xOut + heading;
             double rightFrontPower = yOut + xOut - heading;
             double leftBackPower   = yOut + xOut + heading;
             double rightBackPower  = yOut - xOut - heading;*/
-            
+
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
@@ -99,7 +99,7 @@ public class FieldOrientationProgram extends LinearOpMode {
 
             if (gamepad1.y && canToggleSlowMode) {
                 canToggleSlowMode = false;
-                speedMultiplier = 0.25;
+                speedMultiplier = 0.5;
             }
             laser.getUpdatedPOSE();
             telemetry.addData("z", laser.getZ());

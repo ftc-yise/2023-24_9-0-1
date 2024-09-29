@@ -73,7 +73,6 @@ public class RoadRunnerDriving {
 
             drive.setWeightedDrivePower(new Pose2d(xOut, yOut, heading));
         }
-
     }
 
     public void updateFromDpad(double x, double y, double heading) {
@@ -87,10 +86,10 @@ public class RoadRunnerDriving {
         // Set the speedMultiplier in case of SLOW mode
         if (currentSpeed == Speeds.SLOW) {
             currentSpeed = Speeds.NORMAL;
-            speedMultiplier = 1;
+            speedMultiplier = 0.51;
         } else {
             currentSpeed = Speeds.SLOW;
-            speedMultiplier = 0.5;
+            speedMultiplier = 0.25;
         }
     }
 
